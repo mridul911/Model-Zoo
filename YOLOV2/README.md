@@ -23,7 +23,7 @@ Main purpose of a object detector is to be fast and accurate and able to recogni
 * As indicated in the YOLO paper, the early training is susceptible to unstable gradients. Initially, YOLO makes arbitrary guesses on the boundary boxes. These guesses may work well for some objects but badly for others resulting in steep gradient changes. In early training, predictions are fighting with each other on what shapes to specialize on.
 * YOLO predicts the coordinates of bounding boxes directly using fully connected layers on top of the convolutional feature extractor. Predicting offsets instead of coordinates simplifies the problem and makes it easier for the network to learn. We remove the fully connected layers from YOLO and use anchor boxes to predict bounding boxes. Using anchor boxes we get a small decrease in accuracy.
 * Instead of choosing priors by hand, we run k-means clustering on the training set bounding boxes to automatically find good priors. If we use standard k-means with Euclidean distance learger boxes generate more error than smaller boxes. However, what we really want are priros that lead to good IOU scores, which is indepedndent of the size of the box. Thus for our distance metric we use 1 - IOU(box,centroid). This is how they chooses anchor box...
-
+![4](./images/anchor.png)
 ### 3-High-resolution classifier
 The YOLO training composes of 2 phases. First, we train a classifier network like VGG16. Then we replace the fully connected layers with a convolution layer and retrain it end-to-end for the object detection. YOLO trains the classifier with 224 × 224 pictures followed by 448 × 448 pictures for the object detection. YOLOv2 starts with 224 × 224 pictures for the classifier training but then retune the classifier again with 448 × 448 pictures using much fewer epochs. This makes the detector training easier and moves mAP up by 4%.
 
@@ -31,12 +31,12 @@ The YOLO training composes of 2 phases. First, we train a classifier network lik
 
 They suggest a method to predict bounding boxes of the 9000 most common classes in ImageNet. They add a few more abstract classes to that (e.g. dog for all breeds of dogs) and arrive at over 9000 classes (9418 to be precise).
 They train on ImageNet and MSCOCO.
+![4](./images/mix2.png)
 ### 5-Direct location prediction
 * YOLOv1 does not have constraints on location prediction which makes the model unstable at early iterations. The predicted bounding box can be far from the original grid location.
 * YOLOv2 bounds the location using logistic activation σ, which makes the value fall between 0 to 1:
-*********IMAGE*************
+![4](./images/bounding.png)
 ### Model Summary
-
 ```
 __________________________________________________________________________________________________
 Layer (type)                    Output Shape         Param #     Connected to                     
@@ -208,37 +208,12 @@ I have trained a YOLOv2 model from scratch on VOC2012 dataset till 50 epoch
 
 # Results
 
-## Generated images after 25 epochs(MNIST)
+## Images after 50 epoch(VOC 2012)
 
-![4](./images/MNISTrec_noise_epoch_24.png.png)
+![4](./images/result2.png)
+![4](./images/result3.png)
+![4](./images/result.png)
 
-## Reconstructed images after 25 epochs(MNIST)
+## Accuracy and speed of Model(VOC 2007)
 
-![4](./images/MNISTrec_epoch_24.png.png)
-
-## Generated images after 30 epochs(CIFAR10)
-
-![4](./images/rec_epoch_28.png.png)
-
-## Reconstructed images after 30 epochs(CIFAR10)
-
-![4](./images/rec_epoch_32.png.png)
-
-## Plot of Prior Loss vs Iterations
-
-![4](./images/kl_divergence.png)
-
-## Plot of GAN Loss vs Iterations
-
-![4](./images/gan_loss.png)
-
-## Plot of Reconstruction Loss vs Iterations
-
-![4](./images/recon_loss.png)
-
-
-
-
-
-
-
+![4](./images/acc.png)
